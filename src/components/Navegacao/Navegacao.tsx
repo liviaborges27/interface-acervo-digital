@@ -1,12 +1,7 @@
-import { type JSX } from "react";
+import { type JSX, useState } from "react";
 import { Menubar } from 'primereact/menubar';
 import type { MenuItem } from 'primereact/menuitem';
 import AuthRequests from '../../fetch/AuthRequests';
-import { useState } from 'react';
-
-
-
-
 
 interface CustomMenuItem extends MenuItem {
     badge?: number;
@@ -25,43 +20,37 @@ function Navegacao(): JSX.Element {
         return localStorage.getItem('email') ?? '';
     });
 
-    // const estiloNavbar = {
-    //     backgroundColor: 'var(--primaryColor)',
-    // }
-
-    // const estiloNavOptions = {
-    //     color: 'var(--fontColor)',
-    // }
-
     const logout = () => {
         AuthRequests.removeToken();
         setIsAuthenticated(false);
-    }
+    };
+
+    const itemClass = 'text-white/60 hover:text-white hover:bg-white/10 px-3.5 py-1.5 rounded-md text-sm transition-colors';
 
     const items: CustomMenuItem[] = [
         {
             label: 'Home',
             icon: 'pi pi-home',
-            className: 'm-5 text-white text-lg',
+            className: itemClass,
             url: "/"
         },
         {
             label: 'Alunos',
-            icon: 'pi pi-star',
-            className: 'm-5 text-white text-lg',
+            icon: 'pi pi-users',
+            className: itemClass,
             url: "/lista/aluno"
         },
         {
             label: 'Livros',
-            icon: 'pi pi-star',
-            className: 'm-5 text-white text-lg',
-            url: "#"
+            icon: 'pi pi-book',
+            className: itemClass,
+            url: "/lista/livro"
         },
         {
             label: 'Empréstimos',
-            icon: 'pi pi-star',
-            className: 'm-5 text-white text-lg',
-            url: "#"   
+            icon: 'pi pi-sync',
+            className: itemClass,
+            url: "/lista/emprestimo"
         }
     ];
 
@@ -69,38 +58,45 @@ function Navegacao(): JSX.Element {
         <img
             alt="logo"
             src='./src/assets/app-icon.png'
-            height="100"
-            className="h-20 p-3 ml-10 mr-5 h-[7rem]"
+            className="h-8 ml-6 mr-4"
         />
     );
 
     const end = (
-        <div className="flex align-items-center gap-2">
+        <div className="flex items-center gap-3 pr-6">
             {isAuthenticated ? (
                 <>
-                    <p className="text-white content-center pr-[0.5rem]">Olá, {email}</p>
-                    <button onClick={logout} className="text-white content-center pr-[0.5rem]">Sair</button>
+                    <p className="text-white/60 text-sm">
+                        Olá, <span className="text-white">{email}</span>
+                    </p>
+                    <button
+                        onClick={logout}
+                        className="text-emerald-400 hover:text-emerald-300 text-sm transition-colors"
+                    >
+                        Sair
+                    </button>
                 </>
             ) : (
-                <a href="/login" className="text-white content-center pr-[0.5rem]">Login</a>
-
-                
+                <a
+                    href="/login"
+                    className="text-emerald-400 hover:text-emerald-300 text-sm transition-colors"
+                >
+                    Login
+                </a>
             )}
-          
         </div>
     );
 
     return (
-        <header className="card h-[12vh] bg-slate-700 content-center">
-            <Menubar 
-                model={isAuthenticated ? items : [items[0]]} 
-                start={start} 
-                end={end} 
+        <header className="h-17 bg-[#1e2d3d] flex items-center">
+            <Menubar
+                model={isAuthenticated ? items : [items[0]]}
+                start={start}
+                end={end}
+                className="w-full bg-transparent border-none shadow-none p-0"
             />
         </header>
     );
-
-    
 }
 
 export default Navegacao;
