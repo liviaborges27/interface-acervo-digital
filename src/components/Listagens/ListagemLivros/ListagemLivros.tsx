@@ -1,92 +1,72 @@
-function ListagemLivros() {
+import { type JSX } from "react";
+import { useState, useEffect } from "react";
+import type LivroDTO from "../../../dto/LivroDTO";
+import LivroRequests from "../../../fetch/LivroRequests";
+
+
+function ListagemLivros(): JSX.Element {
+    const [livros, setLivros] = useState<LivroDTO[]>([]);
+
+    useEffect(() => {
+        const buscarLivros = async () => {
+            try {
+                const listaDeLivros = await LivroRequests.obterListaDeLivros();
+                setLivros(listaDeLivros);
+            } catch (error) {
+                console.error(`Erro ao buscar livros. ${error}`);
+                alert("Erro ao criar a listagem de livros.");
+            }
+        }
+
+        buscarLivros();
+    }, []);
+
     return (
-        <div className="min-h-screen bg-neutral-50 p-8">
-            <main>
-                <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-semibold text-neutral-800">Livros</h1>
-                    <button className="bg-[#1e2d3d] hover:bg-[#2a3f56] text-white text-sm px-4 py-2 rounded-lg transition-colors">
-                        + Novo livro
-                    </button>
-                </div>
+        <main className="bg-gray-200 h-[76vh]"> {/* Web Semântica SEO (Search Engine Optimizer) */}
+            <div className="w-8/10 flex m-auto p-12">
+                <h1 className="w-9/10 text-3xl text-center">Livros</h1>
+                <a href="#" className="w-1/10 p-3 text-md bg-slate-700 rounded-md text-center text-white font-bold flex items-center justify-center hover:cursor-pointer">
+                    Novo Livro
+                </a>
+            </div>
 
-                <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
-                    <table className="w-full text-sm border-collapse">
-                        <thead>
-                            <tr className="border-b border-neutral-200">
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">ID</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Título</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Autor</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Editora</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Ano de Publicação</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">ISBN</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Ações</th>
+            <div className="w-8/10 max-w-[80%] max-h-7/10 overflow-auto overscroll-none m-auto border border-slate-800">
+                <table className="table-auto w-full border-collapse text-sm">
+                    <thead className="bg-slate-700 sticky top-0 z-10">
+                        <tr>
+                            <th className="border border-slate-600 text-white">ID</th>
+                            <th className="border border-slate-600 text-white p-4">Título</th>
+                            <th className="border border-slate-600 text-white">Autor</th>
+                            <th className="border border-slate-600 text-white">Editora</th>
+                            <th className="border border-slate-600 text-white">Ano de Publicação</th>
+                            <th className="border border-slate-600 text-white">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody> {/* Dados fictícios (por enquanto) */}
+                        {livros && livros.length > 0 ? (
+                            livros.map((livro) => (
+                                <tr className="border-b-2 text-center odd:bg-slate-300 even:bg-slate-100 hover:bg-slate-600 hover:text-white hover:cursor-pointer" key={livro.id_livro}>
+                                    <td>{livro.id_livro}</td>
+                                    <td className="p-3">{livro.titulo}</td>
+                                    <td>{livro.autor}</td>
+                                    <td>{livro.editora}</td>
+                                    <td>{livro.ano_publicacao}</td>
+                                    <td>
+                                        <a href="#" className="inline-block bg-sky-600 p-2 m-2 w-1/5 rounded-md text-white text-center">Detalhes</a>
+                                        <a href="#" className="inline-block bg-emerald-400 p-2 m-2 w-1/5 rounded-md text-white">Atualizar</a>
+                                        <a href="#" className="inline-block bg-red-600 p-2 m-2 w-1/5 rounded-md text-white">Deletar</a>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={6} className="text-center p-4">Nenhum livro encontrado</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
-                                <td className="px-4 py-3.5 text-neutral-400">1</td>
-                                <td className="px-4 py-3.5 font-medium text-neutral-800">Dom Casmurro</td>
-                                <td className="px-4 py-3.5 text-neutral-500">Machado de Assis</td>
-                                <td className="px-4 py-3.5">
-                                    <span className="bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                                        Fio de Prosa
-                                    </span>
-                                </td>
-                                <td className="px-4 py-3.5 text-neutral-600">10/05/1987</td>
-                                <td className="px-4 py-3.5 font-mono text-xs text-neutral-400">78-85-333-0227-3</td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex gap-1.5">
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Atualizar</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Detalhes</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors">Deletar</a>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
-                                <td className="px-4 py-3.5 text-neutral-400">2</td>
-                                <td className="px-4 py-3.5 font-medium text-neutral-800">Capitães de Areia</td>
-                                <td className="px-4 py-3.5 text-neutral-500">Jorge Amado</td>
-                                <td className="px-4 py-3.5">
-                                    <span className="bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                                        EstiloTech
-                                    </span>
-                                </td>
-                                <td className="px-4 py-3.5 text-neutral-600">10/05/2000</td>
-                                <td className="px-4 py-3.5 font-mono text-xs text-neutral-400">99-85-323-1127-3</td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex gap-1.5">
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Atualizar</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Detalhes</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors">Deletar</a>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr className="hover:bg-neutral-50 transition-colors">
-                                <td className="px-4 py-3.5 text-neutral-400">3</td>
-                                <td className="px-4 py-3.5 font-medium text-neutral-800">O Pequeno Príncipe</td>
-                                <td className="px-4 py-3.5 text-neutral-500">Antoine de Saint-Exupéry</td>
-                                <td className="px-4 py-3.5">
-                                    <span className="bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                                        EstiloTech
-                                    </span>
-                                </td>
-                                <td className="px-4 py-3.5 text-neutral-600">12/09/2022</td>
-                                <td className="px-4 py-3.5 font-mono text-xs text-neutral-400">98-15-323-1122-3</td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex gap-1.5">
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Atualizar</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Detalhes</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors">Deletar</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </main>
-        </div>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </main>
     );
 }
 

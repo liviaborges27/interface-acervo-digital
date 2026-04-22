@@ -1,111 +1,80 @@
-function ListagemEmprestimos() {
+import { type JSX } from "react";
+import { useState, useEffect } from "react";
+import EmprestimoRequests from "../../../fetch/EmprestimoRequests";
+import type EmprestimoDTO from "../../../dto/EmprestimoDTO";
+
+
+function ListagemEmprestimos(): JSX.Element {
+    const [emprestimos, setEmprestimos] = useState<EmprestimoDTO[]>([]);
+
+    useEffect(() => {
+        const buscarEmprestimos = async () => {
+            try {
+                const listaDeEmprestimos = await EmprestimoRequests.obterListaDeEmprestimos();
+                setEmprestimos(listaDeEmprestimos);
+            } catch (error) {
+                console.error(`Erro ao buscar empréstimos. ${error}`);
+                alert("Erro ao criar a listagem de empréstimos.");
+            }
+        }
+
+        buscarEmprestimos();
+    }, []);
+
+    const formatDate = (value?: string | number | Date): string => {
+        if (!value) {
+            return "-";
+        }
+        return new Date(value).toLocaleDateString();
+    };
+
     return (
-        <div className="min-h-screen bg-neutral-50 p-8">
-            <main>
-                <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-semibold text-neutral-800">Empréstimos</h1>
-                    <button className="bg-[#1e2d3d] hover:bg-[#2a3f56] text-white text-sm px-4 py-2 rounded-lg transition-colors">
-                        + Novo empréstimo
-                    </button>
-                </div>
+        <main className="bg-gray-200 h-[76vh]"> {/* Web Semântica SEO (Search Engine Optimizer) */}
+            <div className="w-8/10 flex m-auto p-12">
+                <h1 className="w-9/10 text-3xl text-center">Empréstimos</h1>
+                <a href="#" className="w-1/10 p-3 text-md bg-slate-700 rounded-md text-center text-white font-bold flex items-center justify-center hover:cursor-pointer">
+                    Novo Empréstimo
+                </a>
+            </div>
 
-                <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
-                    <table className="w-full text-sm border-collapse">
-                        <thead>
-                            <tr className="border-b border-neutral-200">
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">ID</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Nome</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Nascimento</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Livro</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Data de Empréstimo</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Celular</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Status</th>
-                                <th className="px-4 py-3 text-left text-[11px] uppercase tracking-widest font-medium text-neutral-400">Ações</th>
+            <div className="w-8/10 max-w-[80%] max-h-7/10 overflow-auto overscroll-none m-auto border border-slate-800">
+                <table className="table-auto w-full border-collapse text-sm">
+                    <thead className="bg-slate-700 sticky top-0 z-10">
+                        <tr>
+                            <th className="border border-slate-600 text-white">Nome</th>
+                            <th className="border border-slate-600 text-white p-4">Celular</th>
+                            <th className="border border-slate-600 text-white">Título</th>
+                            <th className="border border-slate-600 text-white">Data de empréstimo</th>
+                            <th className="border border-slate-600 text-white">Data de devolução</th>
+                            <th className="border border-slate-600 text-white">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody> {/* Dados fictícios (por enquanto) */}
+                        {emprestimos && emprestimos.length > 0 ? (
+                            emprestimos.map((emprestimo) => (
+                                <tr className="border-b-2 text-center odd:bg-slate-300 even:bg-slate-100 hover:bg-slate-600 hover:text-white hover:cursor-pointer" key={emprestimo.id_emprestimo}>
+                                    <td>{emprestimo.aluno.nome} {emprestimo.aluno.sobrenome}</td>
+                                    <td>{emprestimo.aluno.celular}</td>
+                                    <td>{emprestimo.livro.titulo}</td>
+                                    <td>{formatDate(emprestimo.data_emprestimo)}</td>
+                                    <td>{formatDate(emprestimo.data_devolucao)}</td>
+                                   
+                                    <td>
+                                        <a href="#" className="inline-block bg-sky-600 p-2 m-2 w-1/5 rounded-md text-white text-center">Detalhes</a>
+                                        <a href="#" className="inline-block bg-emerald-400 p-2 m-2 w-1/5 rounded-md text-white">Atualizar</a>
+                                        <a href="#" className="inline-block bg-red-600 p-2 m-2 w-1/5 rounded-md text-white">Deletar</a>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={6} className="text-center p-4">Nenhum empréstimo encontrado</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
-                                <td className="px-4 py-3.5 text-neutral-400">1</td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex items-center gap-2.5">
-                                        <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-700 text-xs font-medium flex items-center justify-center">L</span>
-                                        <span className="text-neutral-800">Lívia</span>
-                                    </div>
-                                </td>
-                                <td className="px-4 py-3.5 text-neutral-500">27/05/2000</td>
-                                <td className="px-4 py-3.5 font-medium text-neutral-800">Dom Casmurro</td>
-                                <td className="px-4 py-3.5 text-neutral-600">10/05/2026</td>
-                                <td className="px-4 py-3.5 text-neutral-600">(16) 99339-9999</td>
-                                <td className="px-4 py-3.5">
-                                    <span className="bg-emerald-50 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                                        Ativo
-                                    </span>
-                                </td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex gap-1.5">
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Atualizar</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Detalhes</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors">Deletar</a>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
-                                <td className="px-4 py-3.5 text-neutral-400">2</td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex items-center gap-2.5">
-                                        <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-700 text-xs font-medium flex items-center justify-center">G</span>
-                                        <span className="text-neutral-800">Gabys</span>
-                                    </div>
-                                </td>
-                                <td className="px-4 py-3.5 text-neutral-500">27/05/1987</td>
-                                <td className="px-4 py-3.5 font-medium text-neutral-800">Capitães de Areia</td>
-                                <td className="px-4 py-3.5 text-neutral-600">11/05/2026</td>
-                                <td className="px-4 py-3.5 text-neutral-600">(16) 99339-9900</td>
-                                <td className="px-4 py-3.5">
-                                    <span className="bg-emerald-50 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                                        Ativo
-                                    </span>
-                                </td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex gap-1.5">
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Atualizar</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Detalhes</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors">Deletar</a>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr className="hover:bg-neutral-50 transition-colors">
-                                <td className="px-4 py-3.5 text-neutral-400">3</td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex items-center gap-2.5">
-                                        <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-700 text-xs font-medium flex items-center justify-center">J</span>
-                                        <span className="text-neutral-800">Jadson</span>
-                                    </div>
-                                </td>
-                                <td className="px-4 py-3.5 text-neutral-500">21/05/1970</td>
-                                <td className="px-4 py-3.5 font-medium text-neutral-800">Lima Barreto</td>
-                                <td className="px-4 py-3.5 text-neutral-600">11/05/2000</td>
-                                <td className="px-4 py-3.5 text-neutral-600">(11) 99349-9900</td>
-                                <td className="px-4 py-3.5">
-                                    <span className="bg-emerald-50 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                                        Ativo
-                                    </span>
-                                </td>
-                                <td className="px-4 py-3.5">
-                                    <div className="flex gap-1.5">
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Atualizar</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800 transition-colors">Detalhes</a>
-                                        <a href="#" className="text-xs px-2.5 py-1 rounded-md border border-neutral-200 text-neutral-500 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors">Deletar</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </main>
-        </div>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </main>
     );
 }
 
