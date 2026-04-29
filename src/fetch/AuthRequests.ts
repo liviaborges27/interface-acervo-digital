@@ -1,5 +1,3 @@
-// Classe responsável por fazer requisições à API - autenticação
-
 /**
  * Classe para lidar com autenticação
  */
@@ -47,7 +45,7 @@ class AuthRequests {
             // verifica se o atributo auth da resposta tem o valor TRUE, se tiver é porque a autenticação teve sucesso
             if (data.auth) {
                 // persistem o token, o nome e o id do professor no localstorage
-                this.persistToken(data.token, data.usuario.nome, data.usuario.id_usuario, data.auth);
+                this.persistToken(data.token, data.usuario, data.auth);
             }
 
             // retorna a resposta da requisição a quem chamou a função
@@ -62,33 +60,32 @@ class AuthRequests {
     /**
      * Persiste o token no localStorage
      * @param {*} token - token recebido do servidor
-     * @param {*} email- email do usuário recebido do servidor
-     * @param {*} idUsuario - idUsuario recebido do servidor
+     * @param {*} usuario - objeto com informações do usuário vindos do servidor
+     * @param {*} isAuth - estado da autenticação do usuário
      */
-    persistToken(token: string, email: string, idUsuario: number, isAuth: boolean) {
-        // adiciona o token no localstorade com o apelido de token
-        localStorage.setItem('token', token);  // -> armazena o token no localStorage e coloca o 'apelido' de token
-        // adiciona o email do usuário no localstorade com o apelido de email
-        localStorage.setItem('email', email);  // -> armazena o email no localStorage e coloca o 'apelido' de email
-        // adiciona o id da pessoa no localstorade com o apelido de idPessoa
-        localStorage.setItem('idUsuario', idUsuario.toString());  // -> armazena o idPessoa no localStorage e coloca o 'apelido' de idPessoa
-        // adiciona o valor de autenticação no localstorade com o apelido de isAuth
-        localStorage.setItem('isAuth', isAuth.toString());  // -> armazena o estado da autenticação (true, false) no localStorage e coloca o 'apelido' de isAuth
+    persistToken(token: string, usuario: {id_usuario: number, nome: string, email: string, role: string}, isAuth: boolean) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('nome', usuario.nome);
+        localStorage.setItem('idUsuario', usuario.id_usuario.toString());
+        localStorage.setItem('email', usuario.email);
+        localStorage.setItem('role', usuario.role);
+        localStorage.setItem('isAuth', isAuth.toString());
     }
 
     /**
      * Remove as informações do localStorage
      */
     removeToken() {
-        // remove o token do localstorade
-        localStorage.removeItem('token');  // -> remove o 'apelido' de token do localStorage
-        // remove o email do localstorage
-        localStorage.removeItem('email');  // -> remove o 'apelido' de email do localStorage
-        // remove o idPessoa do localstorage
-        localStorage.removeItem('idUsuario');  // -> remove o 'apelido' de idPessoa do localStorage
-        // remove o isAuth do localstorage
-        localStorage.removeItem('isAuth');  // -> remove o 'apelido' de isAuth do localStorage
-        // redireciona o usuário para a página de login
+        const keys = [
+            'token',
+            'nome',
+            'idUsuario',
+            'email',
+            'role',
+            'isAuth'
+        ];
+
+        keys.map(key => localStorage.removeItem(key));
         window.location.href = `/login`;
     }
 

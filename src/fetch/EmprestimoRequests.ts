@@ -1,11 +1,11 @@
-// Classe responsável por fazer requisições à API - empréstimo
+// Classe responsável por fazer requisições à API - emprestimo
 class EmprestimoRequests {
     private serverURL;
     private endpointEmprestimo;
 
     constructor() {
-        this.serverURL = `http://localhost:3333`;
-        this.endpointEmprestimo = `/api/emprestimos`;
+        this.serverURL = 'http://localhost:3333';
+        this.endpointEmprestimo = '/api/emprestimos';
     }
 
     async obterListaDeEmprestimos() {
@@ -19,7 +19,7 @@ class EmprestimoRequests {
                 }
             });
 
-            if(respostaAPI.ok) {
+            if (respostaAPI.ok) {
                 const listaDeEmprestimos = await respostaAPI.json();
                 return listaDeEmprestimos;
             } else {

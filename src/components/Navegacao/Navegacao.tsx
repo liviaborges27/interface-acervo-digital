@@ -1,7 +1,10 @@
-import { type JSX, useState } from "react";
+import { useState, type JSX } from "react";
 import { Menubar } from 'primereact/menubar';
 import type { MenuItem } from 'primereact/menuitem';
-import AuthRequests from '../../fetch/AuthRequests';
+import { Avatar } from 'primereact/avatar';
+import { useNavigate } from 'react-router-dom';
+import AuthRequests from "../../fetch/AuthRequests";
+import appIcon from "../../assets/app-icon.png";
 
 interface CustomMenuItem extends MenuItem {
     badge?: number;
@@ -10,91 +13,92 @@ interface CustomMenuItem extends MenuItem {
 }
 
 function Navegacao(): JSX.Element {
-    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const [isAuthenticated] = useState(() => {
         const isAuth = localStorage.getItem('isAuth');
         const token = localStorage.getItem('token');
         return !!(isAuth && token && AuthRequests.checkTokenExpiry());
     });
+    const navigate = useNavigate();
 
-    const [email] = useState(() => {
-        return localStorage.getItem('email') ?? '';
-    });
-
-    const logout = () => {
-        AuthRequests.removeToken();
-        setIsAuthenticated(false);
-    };
-
-    const itemClass = 'text-white/60 hover:text-white hover:bg-white/10 px-3.5 py-1.5 rounded-md text-sm transition-colors';
+    const nome = localStorage.getItem('nome') || 'Usuário';
+    const email = localStorage.getItem('email') || '';
+    const avatarImage = "https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png";
 
     const items: CustomMenuItem[] = [
         {
             label: 'Home',
             icon: 'pi pi-home',
-            className: itemClass,
+            className: 'mx-2 md:mx-4 text-white text-sm md:text-base lg:text-lg',
             url: "/"
         },
-        {
-            label: 'Alunos',
-            icon: 'pi pi-users',
-            className: itemClass,
-            url: "/lista/aluno"
-        },
-        {
-            label: 'Livros',
-            icon: 'pi pi-book',
-            className: itemClass,
-            url: "/lista/livro"
-        },
-        {
-            label: 'Empréstimos',
-            icon: 'pi pi-sync',
-            className: itemClass,
-            url: "/lista/emprestimo"
-        }
+        ...(isAuthenticated ? [
+            {
+                label: 'Alunos',
+                icon: 'pi pi-star',
+                className: 'mx-2 md:mx-4 text-white text-sm md:text-base lg:text-lg',
+                url: "/lista/alunos"
+            },
+            {
+                label: 'Livros',
+                icon: 'pi pi-star',
+                className: 'mx-2 md:mx-4 text-white text-sm md:text-base lg:text-lg',
+                url: "/lista/livros"
+            },
+            {
+                label: 'Empréstimos',
+                icon: 'pi pi-star',
+                className: 'mx-2 md:mx-4 text-white text-sm md:text-base lg:text-lg',
+                url: "/lista/emprestimos"
+            }
+        ] : [])
     ];
 
     const start = (
         <img
             alt="logo"
-            src='./src/assets/app-icon.png'
-            className="h-8 ml-6 mr-4"
+            src={appIcon}
+            className="h-10 md:h-12 lg:h-14 w-auto ml-2 md:ml-4 lg:ml-6"
         />
     );
 
-    const end = (
-        <div className="flex items-center gap-3 pr-6">
-            {isAuthenticated ? (
-                <>
-                    <p className="text-white/60 text-sm">
-                        Olá, <span className="text-white">{email}</span>
-                    </p>
-                    <button
-                        onClick={logout}
-                        className="text-emerald-400 hover:text-emerald-300 text-sm transition-colors"
-                    >
-                        Sair
-                    </button>
-                </>
-            ) : (
-                <a
-                    href="/login"
-                    className="text-emerald-400 hover:text-emerald-300 text-sm transition-colors"
-                >
-                    Login
-                </a>
-            )}
+    const userActions = isAuthenticated ? (
+        <div className="flex items-center justify-end mr-4 md:mr-6 lg:mr-10 gap-2 md:gap-4">
+            <div className="flex flex-col pr-2 md:pr-3 hidden sm:flex">
+                <p className="text-white font-semibold m-0 text-sm md:text-base">{nome}</p>
+                <p className="text-white text-xs md:text-sm m-0">{email}</p>
+            </div>
+            <Avatar
+                image={avatarImage}
+                shape="circle"
+                className="!w-8 !h-8 md:!w-10 md:!h-10"
+            />
+            <button
+                className="bg-white ml-2 md:ml-4 text-slate-700 px-3 py-1.5 md:px-5 md:py-2 rounded border-none cursor-pointer flex items-center justify-center gap-1 hover:bg-gray-100 transition-colors text-xs md:text-sm"
+                onClick={AuthRequests.removeToken}
+            >
+                <i className="pi pi-sign-out"></i>
+                <span>Sair</span>
+            </button>
         </div>
+    ) : (
+        <button
+            className="bg-white font-bold text-slate-700 px-3 py-1.5 md:px-5 md:py-2 mr-4 md:mr-6 lg:mr-10 rounded border-none cursor-pointer flex items-center justify-center gap-1 hover:bg-gray-100 transition-colors text-xs md:text-sm"
+            onClick={() => navigate('/login')}
+        >
+            <i className="pi pi-sign-in"></i>
+            <span>Login</span>
+        </button>
     );
 
     return (
-        <header className="h-17 bg-[#1e2d3d] flex items-center">
-            <Menubar
-                model={isAuthenticated ? items : [items[0]]}
-                start={start}
-                end={end}
-                className="w-full bg-transparent border-none shadow-none p-0"
-            />
+        <header className="card bg-slate-700 flex items-center px-2 md:px-4 py-3 min-h-[64px]">
+            <div className="flex-1">
+                <Menubar
+                    model={items}
+                    start={start}
+                />
+            </div>
+            {userActions}
         </header>
     );
 }

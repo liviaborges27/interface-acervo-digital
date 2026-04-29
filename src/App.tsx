@@ -5,18 +5,18 @@ import PLogin from './pages/PLogin/PLogin'
 import PListagemAluno from './pages/PListagem/PListagemAluno/PListagemAluno'
 import PListagemEmprestimo from './pages/PListagem/PListagemEmprestimo/PListagemEmprestimo'
 import PListagemLivro from './pages/PListagem/PListagemLivro/PListagemLivro'
-//import ProtectedRoute from './components/Rotas/ProtectedRoutes'
+// import ProtectedRoute from './components/Rotas/ProtectedRoutes'
 
 function App() {
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<PHome />} /> 
-         <Route path='/login' element={<PLogin />}/>
-          <Route path='/lista/aluno' element={<PListagemAluno />}/>
-            <Route path='/lista/emprestimo' element={<PListagemEmprestimo />}/>
-            <Route path='/lista/livro' element={<PListagemLivro />}/>
+        <Route path='/' element={<PHome />} />
+        <Route path='/login' element={<PLogin />} />
+        <Route path='/lista/alunos' element={<PListagemAluno />} />
+        <Route path='/lista/emprestimos' element={<PListagemEmprestimo />} />
+        <Route path='/lista/livros' element={<PListagemLivro />} />
       </Routes>
     </BrowserRouter>
   )
