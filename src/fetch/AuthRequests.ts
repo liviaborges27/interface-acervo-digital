@@ -1,9 +1,12 @@
 /**
  * Classe para lidar com autenticação
  */
+
+
+const API_URL = import.meta.env.VITE_API_SERVER_URL?.trim() || '';
 class AuthRequests {
 
-    private serverUrl: string;
+    private serverURL: string;
     private endpointLogin: string;
     
     /**
@@ -11,7 +14,7 @@ class AuthRequests {
      */
     constructor() {
         // endereço do servidor
-        this.serverUrl = 'http://localhost:3333';
+       this.serverURL = API_URL;
         // rota do servidor
         this.endpointLogin = '/api/login';
     }
@@ -24,7 +27,7 @@ class AuthRequests {
     async login(login: { email: string, senha: string}) {       
         try {
             // faz a requisição POST ao servidor...
-            const response = await fetch(`${this.serverUrl}${this.endpointLogin}`, {
+            const response = await fetch(`${this.serverURL}${this.endpointLogin}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

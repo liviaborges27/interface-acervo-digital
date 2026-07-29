@@ -46,6 +46,8 @@ function DetalhesLivro({ id_livro }: DetalhesLivroProps): JSX.Element {
         buscarDados();
     }, [id_livro]);
 
+    
+
     // Renderização do estado de carregamento (Skeleton)
     if (loading) {
         return (
